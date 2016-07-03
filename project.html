@@ -180,13 +180,13 @@ pred_lda&lt;-predict(model_lda,validationset)
 pred_qda&lt;-predict(model_qda,validationset)
 confusionMatrix(validationset$classe,pred_rf)$overall[1]</code></pre>
 <pre><code>##  Accuracy 
-## 0.9938825</code></pre>
+## 0.9955139</code></pre>
 <pre class="r"><code>confusionMatrix(validationset$classe,pred_qda[[1]])$overall[1]</code></pre>
 <pre><code>##  Accuracy 
-## 0.8890701</code></pre>
+## 0.8964111</code></pre>
 <pre class="r"><code>confusionMatrix(validationset$classe,pred_lda[[1]])$overall[1]</code></pre>
 <pre><code>##  Accuracy 
-## 0.7098287</code></pre>
+## 0.7004486</code></pre>
 <div id="results" class="section level3">
 <h3>Results</h3>
 <p>As expected, Random Forest algorithm performed better than linear discrimination analysis and quadric discrimination analysis.Accuracy for Random Forest model was 0.996 compared to 0.703 for linear discrimination analysis and 0.898 for quadratic discrimination analysis. The random Forest model is choosen. The accuracy of the model is 0.995. The expected out-of-sample error is estimated at 0.4%. The expected out-of-sample error is calculated as 1 - accuracy for predictions made against the cross-validation set. Our Test data set comprises 20 cases. With an accuracy above 99% on our cross-validation data, we can expect that very few, or none, of the test samples will be missclassified.</p>
@@ -203,6 +203,10 @@ predictfinal</code></pre>
   }
 }
 pml_write_files(predictfinal)</code></pre>
+</div>
+<div id="reference" class="section level3">
+<h3>Reference</h3>
+<p>Ugulino, W.; Cardador, D.; Vega, K.; Velloso, E.; Milidiu, R.; Fuks, H. Wearable Computing: Accelerometers’ Data Classification of Body Postures and Movements. Proceedings of 21st Brazilian Symposium on Artificial Intelligence. Advances in Artificial Intelligence - SBIA 2012. In: Lecture Notes in Computer Science. , pp. 52-61. Curitiba, PR: Springer Berlin / Heidelberg, 2012. ISBN 978-3-642-34458-9. DOI: 10.1007/978-3-642-34459-6_6.</p>
 </div>
 </div>
 </div>
