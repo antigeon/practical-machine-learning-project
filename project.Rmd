@@ -1,0 +1,95 @@
+---
+title: "practical machine learning"
+author: "sjp"
+date: "2016Äê7ÔÂ3ÈÕ"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+library(caret)
+library(randomForest)
+library(MASS)
+```
+
+
+```{r}
+training<-read.csv("pml-training.csv",na.strings=c("NA","#DIV/0!", ""))
+testing<-read.csv("pml-testing.csv" ,na.strings=c("NA","#DIV/0!", "") )
+plot(training$classe, col="blue", main="Bar Plot of levels of the variable classe within the training data set", xlab="classe levels", ylab="Frequency")
+```
+
+
+#Delete first 7 irrelevant variables to our current project: user_name, raw_timestamp_part_1, raw_timestamp_part_2, cvtd_timestamp, new_window, and  num_window 
+```{r}
+training<-training[,-c(1:7)]
+testing<-testing[,-c(1:7)]
+```
+
+##Delete predictors full of NAs.
+```{r}
+
+
+C=length(training[1,])
+R=length(training[,1])
+uselesspred<-NULL
+for (i in 1:C) {
+     n=sum(is.na(training[,i]))
+    if (n>=19000)
+    uselesspred<-c(uselesspred,i)
+}
+training<-training[,-uselesspred]
+testing<-testing[,-uselesspred]
+
+```
+
+##Split data and create validation dataset
+```{r}
+subsamples <- createDataPartition(y=training[,53], p=0.75, list=FALSE)
+trainingset<-training[subsamples,]
+validationset<-training[-subsamples,]
+
+```
+##Make different models with random forest, linear discrimination analysis and quadratic discrimination analysis. 
+```{r}
+model_rf <- randomForest(classe ~. , data=trainingset, method="class")
+model_lda<-lda(classe~.,data = trainingset)
+model_qda<-qda(classe~.,data = trainingset)
+```
+##Make predictions on validation data with our different models,then compare the results. 
+```{r}
+pred_rf<-predict(model_rf,validationset)
+pred_lda<-predict(model_lda,validationset)
+pred_qda<-predict(model_qda,validationset)
+confusionMatrix(validationset$classe,pred_rf)$overall[1]
+confusionMatrix(validationset$classe,pred_qda[[1]])$overall[1]
+confusionMatrix(validationset$classe,pred_lda[[1]])$overall[1]
+
+```
+###Results
+As expected, Random Forest algorithm performed better than linear discrimination analysis and quadric discrimination analysis.Accuracy for Random Forest model was 0.996  compared to 0.703  for linear discrimination analysis and 0.898 for quadratic discrimination analysis. The random Forest model is choosen. The accuracy of the model is 0.995. The expected out-of-sample error is estimated at 0.4%. The expected out-of-sample error is calculated as 1 - accuracy for predictions made against the cross-validation set. Our Test data set comprises 20 cases. With an accuracy above 99% on our cross-validation data, we can expect that very few, or none, of the test samples will be missclassified.
+
+```{r}
+predictfinal <- predict(model_rf, testing,type="class")
+predictfinal
+
+pml_write_files = function(x){
+  n = length(x)
+  for(i in 1:n){
+    filename = paste0("problem_id_",i,".txt")
+    write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+  }
+}
+pml_write_files(predictfinal)
+
+```
+
