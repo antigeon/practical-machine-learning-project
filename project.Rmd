@@ -3,10 +3,12 @@ title: "practical machine learning"
 author: "sjp"
 date: "2016Äê7ÔÂ3ÈÕ"
 output: html_document
+keep_md: true  
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
 ```
 
 ## R Markdown
@@ -52,11 +54,11 @@ testing<-testing[,-uselesspred]
 
 ```
 
-##Split data and create validation dataset
+##Split data and create test dataset
 ```{r}
 subsamples <- createDataPartition(y=training[,53], p=0.75, list=FALSE)
 trainingset<-training[subsamples,]
-validationset<-training[-subsamples,]
+testingset<-training[-subsamples,]
 
 ```
 ##Make different models with random forest, linear discrimination analysis and quadratic discrimination analysis. 
@@ -67,12 +69,12 @@ model_qda<-qda(classe~.,data = trainingset)
 ```
 ##Make predictions on validation data with our different models,then compare the results. 
 ```{r}
-pred_rf<-predict(model_rf,validationset)
-pred_lda<-predict(model_lda,validationset)
-pred_qda<-predict(model_qda,validationset)
-confusionMatrix(validationset$classe,pred_rf)$overall[1]
-confusionMatrix(validationset$classe,pred_qda[[1]])$overall[1]
-confusionMatrix(validationset$classe,pred_lda[[1]])$overall[1]
+pred_rf<-predict(model_rf,testingset)
+pred_lda<-predict(model_lda,testingset)
+pred_qda<-predict(model_qda,testingset)
+confusionMatrix(testingset$classe,pred_rf)$overall[1]
+confusionMatrix(testingset$classe,pred_qda[[1]])$overall[1]
+confusionMatrix(testingset$classe,pred_lda[[1]])$overall[1]
 
 ```
 ###Results
@@ -93,3 +95,5 @@ pml_write_files(predictfinal)
 
 ```
 
+###Reference
+Ugulino, W.; Cardador, D.; Vega, K.; Velloso, E.; Milidiu, R.; Fuks, H. Wearable Computing: Accelerometers' Data Classification of Body Postures and Movements. Proceedings of 21st Brazilian Symposium on Artificial Intelligence. Advances in Artificial Intelligence - SBIA 2012. In: Lecture Notes in Computer Science. , pp. 52-61. Curitiba, PR: Springer Berlin / Heidelberg, 2012. ISBN 978-3-642-34458-9. DOI: 10.1007/978-3-642-34459-6_6.

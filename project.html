@@ -161,11 +161,11 @@ for (i in 1:C) {
 training&lt;-training[,-uselesspred]
 testing&lt;-testing[,-uselesspred]</code></pre>
 </div>
-<div id="split-data-and-create-validation-dataset" class="section level2">
-<h2>Split data and create validation dataset</h2>
+<div id="split-data-and-create-test-dataset" class="section level2">
+<h2>Split data and create test dataset</h2>
 <pre class="r"><code>subsamples &lt;- createDataPartition(y=training[,53], p=0.75, list=FALSE)
 trainingset&lt;-training[subsamples,]
-validationset&lt;-training[-subsamples,]</code></pre>
+testingset&lt;-training[-subsamples,]</code></pre>
 </div>
 <div id="make-different-models-with-random-forest-linear-discrimination-analysis-and-quadratic-discrimination-analysis." class="section level2">
 <h2>Make different models with random forest, linear discrimination analysis and quadratic discrimination analysis.</h2>
@@ -175,18 +175,18 @@ model_qda&lt;-qda(classe~.,data = trainingset)</code></pre>
 </div>
 <div id="make-predictions-on-validation-data-with-our-different-modelsthen-compare-the-results." class="section level2">
 <h2>Make predictions on validation data with our different models,then compare the results.</h2>
-<pre class="r"><code>pred_rf&lt;-predict(model_rf,validationset)
-pred_lda&lt;-predict(model_lda,validationset)
-pred_qda&lt;-predict(model_qda,validationset)
-confusionMatrix(validationset$classe,pred_rf)$overall[1]</code></pre>
+<pre class="r"><code>pred_rf&lt;-predict(model_rf,testingset)
+pred_lda&lt;-predict(model_lda,testingset)
+pred_qda&lt;-predict(model_qda,testingset)
+confusionMatrix(testingset$classe,pred_rf)$overall[1]</code></pre>
 <pre><code>##  Accuracy 
-## 0.9955139</code></pre>
-<pre class="r"><code>confusionMatrix(validationset$classe,pred_qda[[1]])$overall[1]</code></pre>
+## 0.9949021</code></pre>
+<pre class="r"><code>confusionMatrix(testingset$classe,pred_qda[[1]])$overall[1]</code></pre>
 <pre><code>##  Accuracy 
-## 0.8964111</code></pre>
-<pre class="r"><code>confusionMatrix(validationset$classe,pred_lda[[1]])$overall[1]</code></pre>
-<pre><code>##  Accuracy 
-## 0.7004486</code></pre>
+## 0.8992659</code></pre>
+<pre class="r"><code>confusionMatrix(testingset$classe,pred_lda[[1]])$overall[1]</code></pre>
+<pre><code>## Accuracy 
+## 0.699429</code></pre>
 <div id="results" class="section level3">
 <h3>Results</h3>
 <p>As expected, Random Forest algorithm performed better than linear discrimination analysis and quadric discrimination analysis.Accuracy for Random Forest model was 0.996 compared to 0.703 for linear discrimination analysis and 0.898 for quadratic discrimination analysis. The random Forest model is choosen. The accuracy of the model is 0.995. The expected out-of-sample error is estimated at 0.4%. The expected out-of-sample error is calculated as 1 - accuracy for predictions made against the cross-validation set. Our Test data set comprises 20 cases. With an accuracy above 99% on our cross-validation data, we can expect that very few, or none, of the test samples will be missclassified.</p>
